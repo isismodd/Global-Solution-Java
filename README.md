@@ -2,6 +2,8 @@
 
 Plataforma web para aproximar ONGs, voluntários e beneficiários, permitindo o cadastro de perfis e, nas próximas etapas, a divulgação e descoberta de campanhas sociais.
 
+link: https://global-solution-java-rm561497.azurewebsites.net
+
 ## Tecnologias
 
 - Java 21
