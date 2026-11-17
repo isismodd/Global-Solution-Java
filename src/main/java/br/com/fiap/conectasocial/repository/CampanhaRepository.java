@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -90,5 +91,25 @@ public class CampanhaRepository {
                 campanha.getCategoria().trim(),
                 campanha.getLocal().trim()
         );
+    }
+
+    public List<Map<String, Object>> listarCampanhasDoFeed() {
+        String sql = """
+        SELECT
+            C.ID,
+            C.TITULO,
+            C.DESCRICAO,
+            C.CATEGORIA,
+            C.LOCAL,
+            C.ONG_ID,
+            U.NOME AS NOME_ONG
+        FROM CAMPANHAS C
+        INNER JOIN ONGS O ON O.ID = C.ONG_ID
+        INNER JOIN USUARIOS U ON U.ID = O.USUARIO_ID
+        WHERE C.STATUS = 'ATIVA'
+        ORDER BY C.DATA_CRIACAO DESC
+        """;
+
+        return jdbc.queryForList(sql);
     }
 }

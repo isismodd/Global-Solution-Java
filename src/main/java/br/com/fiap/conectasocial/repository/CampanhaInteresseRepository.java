@@ -46,6 +46,26 @@ public class CampanhaInteresseRepository {
         jdbc.update(sql, campanhaId, usuarioId, tipoInteresse);
     }
 
+
+    public boolean jaDemonstrouInteresse(Long campanhaId, Long usuarioId) {
+        String sql = """
+            SELECT COUNT(*)
+            FROM INTERESSES_CAMPANHAS
+            WHERE CAMPANHA_ID = ?
+              AND USUARIO_ID = ?
+            """;
+
+        Integer quantidade = jdbc.queryForObject(
+                sql,
+                Integer.class,
+                campanhaId,
+                usuarioId
+        );
+
+        return quantidade != null && quantidade > 0;
+    }
+
+
     public List<CampanhaInteresse> listarPorOng(Long ongId, String tipoInteresse) {
         String sql = """
                 SELECT

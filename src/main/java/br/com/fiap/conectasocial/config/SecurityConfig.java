@@ -50,9 +50,11 @@ public class SecurityConfig {
                             "/images/**",
                             "/favicon.ico"
                     ).permitAll()
-                .requestMatchers("/", "/home").authenticated()
-                .requestMatchers("/ong/campanhas/**").hasRole("ONG")
-                .anyRequest().authenticated()
+                    .requestMatchers("/", "/home").authenticated()
+                    .requestMatchers("/ong/campanhas/**").hasRole("ONG")
+                    .requestMatchers("/ong/interesses/**").hasRole("ONG")
+                    .requestMatchers("/campanhas/*/interesse").hasAnyRole("VOLUNTARIO", "BENEFICIARIO")
+                    .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")

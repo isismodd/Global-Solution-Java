@@ -4,6 +4,18 @@
 <body>
 <div th:replace="~{layout/base :: layout(~{::page})}">
 <main th:fragment="page">
+
+    <!-- Mensagem de sucesso -->
+    <div th:if="${sucesso}"
+         class="alert alert-success alert-dismissible fade show"
+         role="alert">
+        <strong>✓</strong>
+        <span th:text="${sucesso}"></span>
+        <button type="button" class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Fechar"></button>
+    </div>
+
     <section class="welcome-banner">
         <div class="welcome-copy">
             <span class="eyebrow">CONECTANDO BOAS AÇÕES</span>
@@ -39,10 +51,41 @@
                 <h3 th:text="${campanha.titulo}">Título da campanha</h3>
                 <p class="campaign-description" th:text="${campanha.descricao}">Descrição da campanha</p>
                 <div class="campaign-meta"><span>⌖ <span th:text="${campanha.local}">Local</span></span><span>♡ <span th:text="${campanha.tag}">Tipo</span></span></div>
+
                 <div class="campaign-footer">
                     <span class="campaign-status">Conheça essa causa</span>
-                    <button class="text-action" type="button" data-bs-toggle="modal" data-bs-target="#comingSoonModal">Ver campanha <span>→</span></button>
+
+                    <!-- Voluntário que ainda não demonstrou interesse -->
+                    <div th:if="${perfil == 'VOLUNTARIO' and !campanha.jaDemonstrouInteresse}">
+                        <form th:action="@{/campanhas/{id}/interesse(id=${campanha.ID})}"
+                              method="post">
+                            <button class="text-action" type="submit">
+                                Quero voluntariar <span>→</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Voluntário que já demonstrou interesse -->
+                    <div th:if="${perfil == 'VOLUNTARIO' and campanha.jaDemonstrouInteresse}">
+                        <span class="campaign-status">✓ Interesse registrado</span>
+                    </div>
+
+                    <!-- Beneficiário que ainda não demonstrou interesse -->
+                    <div th:if="${perfil == 'BENEFICIARIO' and !campanha.jaDemonstrouInteresse}">
+                        <form th:action="@{/campanhas/{id}/interesse(id=${campanha.ID})}"
+                              method="post">
+                            <button class="text-action" type="submit">
+                                Preciso de ajuda <span>→</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Beneficiário que já demonstrou interesse -->
+                    <div th:if="${perfil == 'BENEFICIARIO' and campanha.jaDemonstrouInteresse}">
+                        <span class="campaign-status">✓ Interesse registrado</span>
+                    </div>
                 </div>
+
             </div>
         </article>
     </section>

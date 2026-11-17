@@ -5,7 +5,7 @@ import br.com.fiap.conectasocial.model.Campanha;
 import br.com.fiap.conectasocial.repository.CampanhaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.Map;
 import java.util.List;
 
 @Service
@@ -38,6 +38,11 @@ public class CampanhaService {
                         new IllegalArgumentException("ONG não encontrada para este usuário."));
 
         campanhas.inserir(campanha, ongId);
+    }
+
+
+    public List<Map<String, Object>> listarCampanhasDoFeed() {
+        return campanhas.listarCampanhasDoFeed();
     }
 
     private void validar(Campanha campanha) {

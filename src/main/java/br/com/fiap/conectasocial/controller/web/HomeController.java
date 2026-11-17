@@ -1,6 +1,9 @@
+
 package br.com.fiap.conectasocial.controller.web;
 
 import br.com.fiap.conectasocial.model.Usuario;
+import br.com.fiap.conectasocial.service.CampanhaService;
+import br.com.fiap.conectasocial.service.CampanhaInteresseService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,24 +14,109 @@ import java.util.Map;
 
 @Controller
 public class HomeController {
+
+    private final CampanhaService campanhaService;
+    private final CampanhaInteresseService interesseService;
+
+    public HomeController(
+            CampanhaService campanhaService,
+            CampanhaInteresseService interesseService) {
+        this.campanhaService = campanhaService;
+        this.interesseService = interesseService;
+    }
+
     @GetMapping({"/", "/home"})
     public String home(Authentication authentication, Model model) {
-        if (authentication != null && authentication.getPrincipal() instanceof Usuario usuario) {
+
+        Usuario usuarioLogado = null;
+
+        if (authentication != null &&
+                authentication.getPrincipal() instanceof Usuario usuario) {
+
+            usuarioLogado = usuario;
+
             model.addAttribute("usuario", usuario);
             model.addAttribute("perfil", usuario.getPerfil());
             model.addAttribute("nomeExibicao", usuario.getNome());
+
         } else {
             model.addAttribute("perfil", "VOLUNTARIO");
             model.addAttribute("nomeExibicao", "Visitante");
         }
 
-        // Conteúdo demonstrativo para a primeira versão visual do feed.
-        model.addAttribute("campanhas", List.of(
-                Map.of("ong", "Instituto Patas Amigas", "categoria", "Ajuda animal", "local", "São Paulo, SP", "titulo", "Um lar temporário faz toda a diferença", "descricao", "Estamos buscando pessoas dispostas a acolher cães resgatados enquanto eles aguardam uma família definitiva.", "tag", "Voluntariado", "inicial", "PA", "cor", "peach", "fixada", true),
-                Map.of("ong", "Projeto Sementes do Amanhã", "categoria", "Educação", "local", "Guarulhos, SP", "titulo", "Doe seu tempo: reforço escolar para crianças", "descricao", "Precisamos de voluntários para apoiar crianças com atividades de leitura, matemática e aprendizado criativo.", "tag", "Educação", "inicial", "SA", "cor", "yellow", "fixada", false),
-                Map.of("ong", "Cozinha Solidária Esperança", "categoria", "Alimentação", "local", "São Paulo, SP", "titulo", "Mais refeições, mais dignidade", "descricao", "Nossa cozinha comunitária prepara refeições para famílias em situação de vulnerabilidade. Conheça a iniciativa.", "tag", "Apoio social", "inicial", "CE", "cor", "green", "fixada", false)
+        List<Map<String, Object>> campanhas =
+                campanhaService.listarCampanhasDoFeed();
+
+        for (Map<String, Object> campanha : campanhas) {
+
+            String nomeOng = String.valueOf(campanha.get("NOME_ONG"));
+
+            campanha.put("ong", nomeOng);
+            campanha.put("tag", campanha.get("CATEGORIA"));
+            campanha.put("inicial", obterIniciais(nomeOng));
+            campanha.put("cor", obterCor(campanha.get("CATEGORIA")));
+            campanha.put("fixada", false);
+
+            boolean jaDemonstrouInteresse = false;
+
+            if (usuarioLogado != null &&
+                    ("VOLUNTARIO".equals(usuarioLogado.getPerfil()) ||
+                            "BENEFICIARIO".equals(usuarioLogado.getPerfil()))) {
+
+                Number idCampanha = (Number) campanha.get("ID");
+
+                jaDemonstrouInteresse =
+                        interesseService.jaDemonstrouInteresse(
+                                idCampanha.longValue(),
+                                usuarioLogado.getId()
+                        );
+            }
+
+            campanha.put("jaDemonstrouInteresse", jaDemonstrouInteresse);
+        }
+
+        model.addAttribute("campanhas", campanhas);
+
+        model.addAttribute("categorias", List.of(
+                "Todas as causas",
+                "Ajuda animal",
+                "Educação",
+                "Alimentação",
+                "Saúde",
+                "Moradia",
+                "Apoio social"
         ));
-        model.addAttribute("categorias", List.of("Todas as causas", "Ajuda animal", "Educação", "Alimentação", "Saúde", "Moradia", "Apoio social"));
+
         return "home";
+    }
+
+    private String obterIniciais(String nome) {
+        if (nome == null || nome.isBlank()) {
+            return "ONG";
+        }
+
+        String[] partes = nome.trim().split("\\s+");
+
+        if (partes.length == 1) {
+            return partes[0].substring(
+                    0, Math.min(2, partes[0].length())
+            ).toUpperCase();
+        }
+
+        return (partes[0].charAt(0) +
+                partes[1].substring(0, 1)).toUpperCase();
+    }
+
+    private String obterCor(Object categoria) {
+        if (categoria == null) {
+            return "peach";
+        }
+
+        return switch (categoria.toString().toLowerCase()) {
+            case "educação" -> "yellow";
+            case "alimentação" -> "green";
+            case "saúde" -> "peach";
+            default -> "peach";
+        };
     }
 }
