@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head}">
+    <title>Minhas campanhas - ConectaSocial</title>
+</head>
+<body>
+
+<div th:replace="~{layout/base :: layout(~{::page})}">
+    <main th:fragment="page" class="container py-5">
+
+        <style>
+            .minhas-campanhas-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 24px;
+                margin-bottom: 30px;
+                position: relative;
+                isolation: isolate;
+            }
+
+            .minhas-campanhas-header .titulo-area {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .minhas-campanhas-header .titulo-area h2 {
+                margin: 0 0 8px;
+            }
+
+            .minhas-campanhas-header .titulo-area p {
+                margin: 0;
+            }
+
+            .minhas-campanhas-header .btn-nova-campanha {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                position: relative;
+                z-index: 2;
+                background: #f45a22;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                padding: 12px 18px;
+                text-decoration: none;
+                font-weight: 700;
+            }
+
+            .minhas-campanhas-vazio {
+                position: relative;
+                isolation: isolate;
+                clear: both;
+                background: white;
+                border: 1px solid #eee8e3;
+                border-radius: 15px;
+                padding: 45px 25px;
+                text-align: center;
+                box-shadow: 0 4px 15px rgba(55, 39, 27, .05);
+            }
+
+            @media (max-width: 600px) {
+                .minhas-campanhas-header {
+                    align-items: flex-start;
+                    flex-direction: column;
+                }
+            }
+        </style>
+
+        <div class="minhas-campanhas-header">
+            <div class="titulo-area">
+                <h2>Minhas campanhas</h2>
+                <p class="text-muted">
+                    Gerencie as iniciativas da sua organização.
+                </p>
+            </div>
+
+            <a th:href="@{/ong/campanhas/nova}" class="btn-nova-campanha">
+                <i class="fas fa-plus me-2"></i>Nova campanha
+            </a>
+        </div>
+
+        <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
+        <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+
+        <div th:if="${#lists.isEmpty(campanhas)}"
+             class="minhas-campanhas-vazio">
+
+            <i class="fas fa-bullhorn fa-3x mb-3"
+               style="color: #f45a22;"></i>
+
+            <h4>Nenhuma campanha cadastrada</h4>
+
+            <p class="text-muted mb-0">
+                Comece criando sua primeira campanha para divulgar sua iniciativa.
+            </p>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head}">
+    <title>Pessoas interessadas - ConectaSocial</title>
+</head>
+<body>
+
+<div th:replace="~{layout/base :: layout(~{::page})}">
+    <main th:fragment="page" class="container py-5">
+
+        <div class="mb-4">
+            <h2 class="mb-1">Pessoas interessadas</h2>
+            <p class="text-muted mb-0">
+                Acompanhe quem deseja participar das suas iniciativas
+                ou precisa de ajuda.
+            </p>
+        </div>
+
+        <style>
+            .interesse-section {
+                background: white;
+                border: 1px solid #eee8e3;
+                border-radius: 15px;
+                padding: 25px;
+                margin-bottom: 28px;
+            }
+
+            .interesse-section h4 {
+                font-weight: 800;
+                margin-bottom: 5px;
+            }
+
+            .interesse-section .subtitulo {
+                color: #88817c;
+                font-size: 13px;
+                margin-bottom: 22px;
+            }
+
+            .interesse-item {
+                border: 1px solid #eee8e3;
+                border-radius: 12px;
+                padding: 17px;
+                margin-bottom: 12px;
+            }
+
+            .interesse-item:last-child {
+                margin-bottom: 0;
+            }
+
+            .interesse-item h5 {
+                font-size: 15px;
+                font-weight: 700;
+                margin-bottom: 5px;
+            }
+
+            .interesse-item p {
+                font-size: 13px;
+                color: #88817c;
+                margin-bottom: 5px;
+            }
+
+            .interesse-vazio {
+                text-align: center;
+                padding: 30px 15px;
+                color: #88817c;
+                background: #faf8f6;
+                border-radius: 12px;
+            }
+        </style>
+
+        <!-- INTERESSE EM VOLUNTARIAR -->
+        <section class="interesse-section">
+
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div style="font-size: 28px; color: #39834d;">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+
+                <div>
+                    <h4>Interesse em voluntariar</h4>
+                    <p class="subtitulo mb-0">
+                        Pessoas que desejam participar das suas campanhas.
+                    </p>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(voluntarios)}"
+                 class="interesse-vazio">
+                <i class="fas fa-users fa-2x mb-3"></i>
+                <h5>Nenhum voluntário interessado</h5>
+                <p class="mb-0">
+                    Quando alguém demonstrar interesse, aparecerá aqui.
+                </p>
+            </div>
+
+            <div th:each="interesse : ${voluntarios}"
+                 class="interesse-item">
+
+                <div class="d-flex flex-wrap justify-content-between gap-2">
+                    <div>
+                        <h5 th:text="${interesse.nomeUsuario}">
+                            Nome do voluntário
+                        </h5>
+
+                        <p>
+                            <i class="fas fa-envelope me-2"></i>
+                            <span th:text="${interesse.emailUsuario}">
+                                email@exemplo.com
+                            </span>
+                        </p>
+
+                        <p>
+                            <i class="fas fa-bullhorn me-2"></i>
+                            Campanha:
+                            <strong th:text="${interesse.tituloCampanha}">
+                                Nome da campanha
+                            </strong>
+                        </p>
+                    </div>
+
+                    <small class="text-muted"
+                           th:if="${interesse.dataInteresse != null}"
+                           th:text="${#temporals.format(interesse.dataInteresse, 'dd/MM/yyyy HH:mm')}">
+                    </small>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- PEDIDOS DE AJUDA -->
+        <section class="interesse-section">
+
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div style="font-size: 28px; color: #f45a22;">
+                    <i class="fas fa-heart"></i>
+                </div>
+
+                <div>
+                    <h4>Pedidos de ajuda</h4>
+                    <p class="subtitulo mb-0">
+                        Beneficiários que solicitaram ajuda por meio das campanhas.
+                    </p>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(pedidosAjuda)}"
+                 class="interesse-vazio">
+                <i class="fas fa-heart fa-2x mb-3"></i>
+                <h5>Nenhum pedido de ajuda recebido</h5>
+                <p class="mb-0">
+                    Quando alguém solicitar ajuda, aparecerá aqui.
+                </p>
+            </div>
+
+            <div th:each="interesse : ${pedidosAjuda}"
+                 class="interesse-item">
+
+                <div class="d-flex flex-wrap justify-content-between gap-2">
+                    <div>
+                        <h5 th:text="${interesse.nomeUsuario}">
+                            Nome do beneficiário
+                        </h5>
+
+                        <p>
+                            <i class="fas fa-envelope me-2"></i>
+                            <span th:text="${interesse.emailUsuario}">
+                                email@exemplo.com
+                            </span>
+                        </p>
+
+                        <p>
+                            <i class="fas fa-bullhorn me-2"></i>
+                            Campanha:
+                            <strong th:text="${interesse.tituloCampanha}">
+                                Nome da campanha
+                            </strong>
+                        </p>
+                    </div>
+
+                    <small class="text-muted"
+                           th:if="${interesse.dataInteresse != null}"
+                           th:text="${#temporals.format(interesse.dataInteresse, 'dd/MM/yyyy HH:mm')}">
+                    </small>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>

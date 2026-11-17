@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br" th:fragment="layout(page)">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ConectaSocial</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/conectasocial.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="brand-lockup" th:href="@{/home}">
+            <img src="/images/conectasocial-logo.png" alt="Logotipo ConectaSocial" class="brand-logo">
+            <span class="brand-name">Conecta<span>Social</span></span>
+        </a>
+        <div class="sidebar-caption">MENU PRINCIPAL</div>
+        <nav class="side-nav">
+            <a class="side-link active" th:href="@{/home}"><span class="nav-symbol">⌂</span> Feed principal</a>
+            <a class="side-link" href="#explorar"><span class="nav-symbol">⌕</span> Explorar campanhas</a>
+            <a class="side-link" href="#categorias"><span class="nav-symbol">◇</span> Categorias</a>
+            <a class="side-link" href="#minhas-atividades" th:if="${perfil == 'VOLUNTARIO' or perfil == 'BENEFICIARIO'}"><span class="nav-symbol">♡</span> Minhas atividades</a>
+            <a class="side-link" th:href="@{/ong/campanhas}" th:if="${perfil == 'ONG'}"><span class="nav-symbol">▤</span> Minhas campanhas</a>
+            <a class="side-link" th:href="@{/ong/interesses}" th:if="${perfil == 'ONG'}">♧</span> Pessoas interessadas</a>
+            <a class="side-link" href="#gestao" th:if="${perfil == 'ADMIN'}"><span class="nav-symbol">⚙</span> Gestão da plataforma</a>
+        </nav>
+        <div class="sidebar-bottom">
+            <div class="help-card"><div class="help-icon">✳</div><strong>Juntos fazemos mais.</strong><p>Pequenas atitudes podem transformar muitas histórias.</p></div>
+            <div class="profile-mini">
+                <div class="avatar avatar-orange" th:text="${#strings.substring(nomeExibicao,0,1).toUpperCase()}">U</div>
+                <div class="profile-mini-text"><strong th:text="${nomeExibicao}">Usuário</strong><small th:text="${perfil}">PERFIL</small></div>
+                <a class="logout-link" th:href="@{/logout}" title="Sair">↗</a>
+            </div>
+        </div>
+    </aside>
+    <main class="main-area">
+        <header class="topbar">
+            <div class="mobile-brand"><img src="/images/conectasocial-logo.png" alt=""/> ConectaSocial</div>
+            <div class="breadcrumb-label">Início <span>/</span> <strong>Feed principal</strong></div>
+            <div class="topbar-actions"><span class="welcome-label">Olá, <strong th:text="${nomeExibicao}">pessoa</strong> 👋</span><button class="icon-button" type="button" aria-label="Notificações">♧<i></i></button></div>
+        </header>
+        <section class="page-content">
+            <div th:if="${mensagem}" class="alert alert-success" role="alert" th:text="${mensagem}"></div>
+            <div th:if="${erro}" class="alert alert-danger" role="alert" th:text="${erro}"></div>
+            <th:block th:replace="${page}"></th:block>
+        </section>
+    </main>
+</div>
+<script src="/webjars/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+(function(){
+ const search=document.getElementById('campaignSearch');
+ const category=document.getElementById('categoryFilter');
+ const location=document.getElementById('locationFilter');
+ const cards=[...document.querySelectorAll('.campaign-card')];
+ const empty=document.getElementById('emptyState');
+ function filter(){const q=(search?.value||'').toLocaleLowerCase('pt-BR');const c=category?.value||'';const l=(location?.value||'').toLocaleLowerCase('pt-BR');let visible=0;cards.forEach(card=>{const text=card.innerText.toLocaleLowerCase('pt-BR');const okQ=!q||text.includes(q);const okC=!c||card.dataset.category===c;const okL=!l||card.dataset.location.toLocaleLowerCase('pt-BR').includes(l);card.hidden=!(okQ&&okC&&okL);if(!card.hidden)visible++;});if(empty)empty.hidden=visible!==0;}
+ [search,category,location].forEach(el=>el?.addEventListener('input',filter));
+})();
+</script>
+</body>
+</html>

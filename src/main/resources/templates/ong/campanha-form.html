@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head}">
+    <title>Nova campanha - ConectaSocial</title>
+</head>
+<body>
+
+<div th:replace="~{layout/base :: layout(~{::page})}">
+    <main th:fragment="page" class="container py-5">
+
+        <div class="mb-4">
+            <a th:href="@{/ong/campanhas}" class="text-decoration-none">
+                <i class="fas fa-arrow-left me-2"></i>Voltar para minhas campanhas
+            </a>
+        </div>
+
+        <div class="card shadow-sm border-0 mx-auto" style="max-width: 750px;">
+            <div class="card-body p-4 p-md-5">
+
+                <h2 class="mb-2">Criar nova campanha</h2>
+                <p class="text-muted mb-4">
+                    Compartilhe sua iniciativa e encontre pessoas dispostas a ajudar.
+                </p>
+
+                <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+                <form th:action="@{/ong/campanhas}" th:object="${campanha}" method="post">
+
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título da campanha</label>
+                        <input type="text" id="titulo" th:field="*{titulo}"
+                               class="form-control" maxlength="150"
+                               placeholder="Ex.: Doe alimentos para famílias" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <textarea id="descricao" th:field="*{descricao}"
+                                  class="form-control" rows="5" maxlength="2000"
+                                  placeholder="Conte um pouco sobre sua campanha..." required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="categoria" class="form-label">Categoria</label>
+                        <select id="categoria" th:field="*{categoria}"
+                                class="form-select" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="Ajuda animal">Ajuda animal</option>
+                            <option value="Educação">Educação</option>
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Moradia">Moradia</option>
+                            <option value="Apoio social">Apoio social</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="local" class="form-label">Localização</label>
+                        <input type="text" id="local" th:field="*{local}"
+                               class="form-control" maxlength="150"
+                               placeholder="Ex.: São Paulo, SP" required>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a th:href="@{/ong/campanhas}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Criar campanha
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

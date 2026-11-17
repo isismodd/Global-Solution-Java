@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar senha - ConectaSocial</title>
+
+    <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css">
+
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f5ef;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .recovery-card {
+            width: 100%;
+            max-width: 440px;
+            background: #fff;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            color: #e87832;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #777;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            padding: 12px;
+            border-radius: 9px;
+        }
+
+        .btn-orange {
+            width: 100%;
+            padding: 12px;
+            background: #e87832;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-weight: bold;
+        }
+
+        .btn-orange:hover {
+            background: #cf6324;
+            color: white;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 22px;
+            color: #e87832;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="recovery-card">
+
+    <div class="logo">ConectaSocial</div>
+
+    <h4 class="text-center mb-2">Esqueceu sua senha?</h4>
+
+    <p class="subtitle">
+        Informe seu e-mail cadastrado e enviaremos um link para criar uma nova senha.
+    </p>
+
+    <div th:if="${mensagem}"
+         class="alert alert-success"
+         th:text="${mensagem}">
+    </div>
+
+    <div th:if="${erro}"
+         class="alert alert-danger"
+         th:text="${erro}">
+    </div>
+
+    <form th:action="@{/recuperar-senha}" method="post">
+
+        <div class="mb-3">
+            <label for="email" class="form-label">E-mail cadastrado</label>
+
+            <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="seuemail@exemplo.com"
+                    required>
+        </div>
+
+        <button type="submit" class="btn-orange">
+            Enviar link de recuperação
+        </button>
+
+    </form>
+
+    <a href="/login" class="back-link">
+        Voltar para o login
+    </a>
+
+</div>
+
+</body>
+</html>
