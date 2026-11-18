@@ -1,8 +1,13 @@
 package br.com.fiap.conectasocial.dto.auth;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class LoginRequest {
 
+    @NotBlank(message = "O e-mail é obrigatório")
     private String email;
+
+    @NotBlank(message = "A senha é obrigatória")
     private String senha;
 
     public LoginRequest() {
