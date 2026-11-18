@@ -15,6 +15,8 @@ import br.com.fiap.conectasocial.api.repository.CampanhaJpaRepository;
 import br.com.fiap.conectasocial.api.repository.InteresseCampanhaJpaRepository;
 import br.com.fiap.conectasocial.api.repository.OngJpaRepository;
 import br.com.fiap.conectasocial.api.repository.UsuarioJpaRepository;
+import br.com.fiap.conectasocial.messaging.InteresseRegistradoEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,15 +28,18 @@ public class InteresseApiService {
     private final CampanhaJpaRepository campanhas;
     private final OngJpaRepository ongs;
     private final UsuarioJpaRepository usuarios;
+    private final ApplicationEventPublisher eventos;
 
     public InteresseApiService(InteresseCampanhaJpaRepository interesses,
                                CampanhaJpaRepository campanhas,
                                OngJpaRepository ongs,
-                               UsuarioJpaRepository usuarios) {
+                               UsuarioJpaRepository usuarios,
+                               ApplicationEventPublisher eventos) {
         this.interesses = interesses;
         this.campanhas = campanhas;
         this.ongs = ongs;
         this.usuarios = usuarios;
+        this.eventos = eventos;
     }
 
     @Transactional
@@ -58,6 +63,18 @@ public class InteresseApiService {
 
         InteresseCampanhaEntity salvo = interesses.save(
                 new InteresseCampanhaEntity(campanha, usuarios.getReferenceById(usuarioId), tipo));
+
+        // Publicado no RabbitMQ somente depois do commit (ver InteresseEventPublisher)
+        eventos.publishEvent(new InteresseRegistradoEvent(
+                salvo.getId(),
+                campanha.getId(),
+                campanha.getTitulo(),
+                campanha.getOng().getUsuario().getNome(),
+                campanha.getOng().getUsuario().getEmail(),
+                salvo.getUsuario().getId(),
+                salvo.getUsuario().getNome(),
+                tipo,
+                salvo.getDataInteresse()));
 
         return InteresseResponse.de(salvo);
     }

@@ -4,6 +4,7 @@ import br.com.fiap.conectasocial.model.CampanhaInteresse;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import java.util.Map;
 
 import java.util.List;
 
@@ -95,5 +96,29 @@ public class CampanhaInteresseRepository {
             """;
 
         return jdbc.update(sql, campanhaId);
+    }
+
+    public Map<String, Object> buscarDadosNotificacao(Long campanhaId, Long usuarioId) {
+        String sql = """
+        SELECT
+            IC.ID AS INTERESSE_ID,
+            IC.CAMPANHA_ID,
+            C.TITULO AS TITULO_CAMPANHA,
+            U_ONG.NOME AS NOME_ONG,
+            U_ONG.EMAIL AS EMAIL_ONG,
+            IC.USUARIO_ID,
+            U_INT.NOME AS NOME_USUARIO,
+            IC.TIPO_INTERESSE,
+            IC.DATA_INTERESSE
+        FROM INTERESSES_CAMPANHAS IC
+        INNER JOIN CAMPANHAS C ON C.ID = IC.CAMPANHA_ID
+        INNER JOIN ONGS O ON O.ID = C.ONG_ID
+        INNER JOIN USUARIOS U_ONG ON U_ONG.ID = O.USUARIO_ID
+        INNER JOIN USUARIOS U_INT ON U_INT.ID = IC.USUARIO_ID
+        WHERE IC.CAMPANHA_ID = ?
+          AND IC.USUARIO_ID = ?
+        """;
+
+        return jdbc.queryForMap(sql, campanhaId, usuarioId);
     }
 }
