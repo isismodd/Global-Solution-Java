@@ -87,4 +87,13 @@ public class CampanhaInteresseRepository {
 
         return jdbc.query(sql, rowMapper, ongId, tipoInteresse);
     }
+
+    public int excluirPorCampanha(Long campanhaId) {
+        String sql = """
+            DELETE FROM INTERESSES_CAMPANHAS
+            WHERE CAMPANHA_ID = ?
+            """;
+
+        return jdbc.update(sql, campanhaId);
+    }
 }

@@ -10,6 +10,181 @@
     <main th:fragment="page" class="container py-5">
 
         <style>
+
+            .minhas-campanhas-grid {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 24px;
+                margin-top: 25px;
+            }
+
+            .minha-campanha-card {
+                background: #fff;
+                border: 1px solid #eee8e3;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(55, 39, 27, .05);
+                transition: transform .2s ease, box-shadow .2s ease;
+            }
+
+            .minha-campanha-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 9px 24px rgba(55, 39, 27, .10);
+            }
+
+            .minha-campanha-imagem {
+                height: 190px;
+                position: relative;
+                overflow: hidden;
+                background: #fff0e7;
+            }
+
+            .minha-campanha-imagem > img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .minha-campanha-sem-imagem {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                color: #cf5524;
+                font-size: 15px;
+                font-weight: 700;
+            }
+
+            .minha-campanha-sem-imagem i {
+                font-size: 42px;
+            }
+
+            .minha-campanha-status {
+                position: absolute;
+                top: 13px;
+                right: 13px;
+                background: #087d54;
+                color: white;
+                border-radius: 20px;
+                padding: 6px 12px;
+                font-size: 11px;
+                font-weight: 800;
+            }
+
+            .minha-campanha-conteudo {
+                padding: 20px;
+            }
+
+            .minha-campanha-categoria {
+                display: inline-block;
+                background: #fff0e7;
+                color: #cf5524;
+                padding: 5px 11px;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 700;
+                margin-bottom: 12px;
+            }
+
+            .minha-campanha-conteudo h3 {
+                font-size: 17px;
+                font-weight: 800;
+                color: #292421;
+                line-height: 1.4;
+                margin-bottom: 10px;
+            }
+
+            .minha-campanha-descricao {
+                color: #77716d;
+                font-size: 13px;
+                line-height: 1.6;
+                margin-bottom: 18px;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .minha-campanha-local {
+                border-top: 1px solid #f0ece8;
+                padding-top: 13px;
+                color: #77716d;
+                font-size: 12px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .minha-campanha-local i {
+                color: #f45a22;
+            }
+
+            .minha-campanha-acoes {
+                display: flex;
+                gap: 10px;
+                margin-top: 18px;
+                padding-top: 14px;
+                border-top: 1px solid #f0ece8;
+            }
+
+            .btn-editar-campanha,
+            .btn-excluir-campanha {
+                flex: 1;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                border-radius: 9px;
+                padding: 10px 12px;
+                font-size: 13px;
+                font-weight: 700;
+                text-decoration: none;
+                cursor: pointer;
+                transition: .2s ease;
+            }
+
+            .btn-editar-campanha {
+                background: #fff0e7;
+                color: #cf5524;
+                border: 1px solid #f8d7c5;
+            }
+
+            .btn-editar-campanha:hover {
+                background: #f45a22;
+                color: white;
+            }
+
+            .btn-excluir-campanha {
+                background: white;
+                color: #c0392b;
+                border: 1px solid #f1ceca;
+            }
+
+            .btn-excluir-campanha:hover {
+                background: #c0392b;
+                color: white;
+            }
+
+            .minha-campanha-acoes form {
+                display: flex;
+                flex: 1;
+            }
+
+            @media (max-width: 1000px) {
+                .minhas-campanhas-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+            }
+
+            @media (max-width: 600px) {
+                .minhas-campanhas-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
             .minhas-campanhas-header {
                 display: flex;
                 justify-content: space-between;
@@ -89,6 +264,8 @@
         <div th:if="${#lists.isEmpty(campanhas)}"
              class="minhas-campanhas-vazio">
 
+
+
             <i class="fas fa-bullhorn fa-3x mb-3"
                style="color: #f45a22;"></i>
 
@@ -97,6 +274,76 @@
             <p class="text-muted mb-0">
                 Comece criando sua primeira campanha para divulgar sua iniciativa.
             </p>
+        </div>
+
+        <div th:if="${not #lists.isEmpty(campanhas)}"
+             class="minhas-campanhas-grid">
+
+            <article class="minha-campanha-card"
+                     th:each="campanha : ${campanhas}">
+
+                <div class="minha-campanha-imagem">
+
+                    <img th:if="${campanha.temImagem}"
+                         th:src="@{/campanhas/{id}/imagem(id=${campanha.id})}"
+                         alt="Imagem da campanha">
+
+                    <div th:unless="${campanha.temImagem}"
+                         class="minha-campanha-sem-imagem">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        <span th:text="${campanha.categoria}">Categoria</span>
+                    </div>
+
+                    <span class="minha-campanha-status"
+                          th:text="${campanha.status}">
+                ATIVA
+            </span>
+                </div>
+
+                <div class="minha-campanha-conteudo">
+
+            <span class="minha-campanha-categoria"
+                  th:text="${campanha.categoria}">
+                Categoria
+            </span>
+
+                    <h3 th:text="${campanha.titulo}">
+                        Título da campanha
+                    </h3>
+
+                    <p class="minha-campanha-descricao"
+                       th:text="${campanha.descricao}">
+                        Descrição da campanha
+                    </p>
+
+                    <div class="minha-campanha-local">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span th:text="${campanha.local}">Local</span>
+                    </div>
+
+                    <div class="minha-campanha-acoes">
+
+                        <a th:href="@{/ong/campanhas/{id}/editar(id=${campanha.id})}"
+                           class="btn-editar-campanha">
+                            <i class="fas fa-pen"></i>
+                            Editar
+                        </a>
+
+                        <form th:action="@{/ong/campanhas/{id}/excluir(id=${campanha.id})}"
+                              method="post"
+                              onsubmit="return confirm('Tem certeza que deseja excluir esta campanha?');">
+
+                            <button type="submit" class="btn-excluir-campanha">
+                                <i class="fas fa-trash"></i>
+                                Excluir
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+            </article>
         </div>
 
     </main>

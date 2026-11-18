@@ -13,6 +13,19 @@ public class Campanha {
     private String local;
     private String status;
     private LocalDateTime dataCriacao;
+    private byte[] imagem;
+    private boolean temImagem;
+
+
+
+
+    public boolean isTemImagem() {
+        return temImagem;
+    }
+
+    public void setTemImagem(boolean temImagem) {
+        this.temImagem = temImagem;
+    }
 
     public Long getId() {
         return id;
@@ -76,5 +89,13 @@ public class Campanha {
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public byte[] getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(byte[] imagem) {
+        this.imagem = imagem;
     }
 }

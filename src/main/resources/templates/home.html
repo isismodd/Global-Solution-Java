@@ -28,30 +28,144 @@
 
     <section class="feed-heading" id="explorar">
         <div><span class="eyebrow">DESCUBRA O QUE ESTÁ ACONTECENDO</span><h2>Campanhas em destaque</h2><p>Encontre uma causa que combine com você.</p></div>
-        <span class="results-pill"><span></span> Comunidade ativa</span>
+        <span class="results-pill">
+        <span></span>
+            <strong th:text="${#lists.size(campanhas)}">0</strong>
+            <th:block th:text="${#lists.size(campanhas) == 1 ? 'campanha disponível' : 'campanhas disponíveis'}">
+                campanhas disponíveis
+            </th:block>
+        </span>
     </section>
+
 
     <section class="filter-panel" aria-label="Filtros de campanhas">
-        <label class="search-box"><span>⌕</span><input id="campaignSearch" type="search" placeholder="Buscar campanhas, ONGs ou causas..."></label>
-        <label class="filter-select"><span>Categoria</span><select id="categoryFilter"><option value="">Todas as causas</option><option>Ajuda animal</option><option>Educação</option><option>Alimentação</option><option>Saúde</option><option>Moradia</option><option>Apoio social</option></select></label>
-        <label class="filter-select location-select"><span>Localização</span><input id="locationFilter" type="search" placeholder="Ex.: São Paulo"></label>
-        <button class="filter-button" type="button" onclick="document.getElementById('campaignSearch').value='';document.getElementById('categoryFilter').value='';document.getElementById('locationFilter').value='';document.getElementById('campaignSearch').dispatchEvent(new Event('input'))">Limpar filtros</button>
+
+        <label class="search-box">
+            <span>⌕</span>
+            <input id="campaignSearch" type="search"
+                   placeholder="Buscar campanhas, ONGs ou causas...">
+        </label>
+
+        <div class="category-filter">
+            <span class="category-filter-title">Explore por categoria</span>
+
+            <div class="category-options" id="categoryFilter">
+                <button type="button" class="category-option active"
+                        data-category="" aria-pressed="true">
+                    <span class="category-icon">🌎</span>
+                    <span>Todas</span>
+                </button>
+
+                <button type="button" class="category-option"
+                        data-category="Ajuda animal" aria-pressed="false">
+                    <span class="category-icon">🐾</span>
+                    <span>Ajuda animal</span>
+                </button>
+
+                <button type="button" class="category-option"
+                        data-category="Educação" aria-pressed="false">
+                    <span class="category-icon">📚</span>
+                    <span>Educação</span>
+                </button>
+
+                <button type="button" class="category-option"
+                        data-category="Alimentação" aria-pressed="false">
+                    <span class="category-icon">🍲</span>
+                    <span>Alimentação</span>
+                </button>
+
+                <button type="button" class="category-option"
+                        data-category="Saúde" aria-pressed="false">
+                    <span class="category-icon">❤️</span>
+                    <span>Saúde</span>
+                </button>
+
+                <button type="button" class="category-option"
+                        data-category="Moradia" aria-pressed="false">
+                    <span class="category-icon">🏠</span>
+                    <span>Moradia</span>
+                </button>
+
+                <button type="button" class="category-option"
+                        data-category="Apoio social" aria-pressed="false">
+                    <span class="category-icon">🤝</span>
+                    <span>Apoio social</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="filter-bottom">
+            <label class="filter-select location-select">
+                <span>⌖ Localização</span>
+                <input id="locationFilter" type="search"
+                       placeholder="Ex.: São Paulo">
+            </label>
+
+            <button class="filter-button" type="button" id="clearFilters">
+                ↺ Limpar filtros
+            </button>
+        </div>
+
     </section>
 
-    <section class="campaign-grid" id="categorias">
-        <article class="campaign-card" th:each="campanha : ${campanhas}" th:data-category="${campanha.categoria}" th:data-location="${campanha.local}">
-            <div class="campaign-visual" th:classappend="${' visual-' + campanha.cor}">
-                <span class="campaign-category" th:text="${campanha.categoria}">Categoria</span>
-                <span class="pinned-label" th:if="${campanha.fixada and perfil == 'ADMIN'}">★ Fixada</span>
-                <span class="visual-initials" th:text="${campanha.inicial}">ONG</span>
-                <span class="visual-heart">♥</span>
-            </div>
-            <div class="campaign-body">
-                <div class="organization-line"><span class="org-avatar" th:text="${campanha.inicial}">ON</span><span th:text="${campanha.ong}">Nome da ONG</span><span class="verified-mark" title="Organização cadastrada">✓</span></div>
-                <h3 th:text="${campanha.titulo}">Título da campanha</h3>
-                <p class="campaign-description" th:text="${campanha.descricao}">Descrição da campanha</p>
-                <div class="campaign-meta"><span>⌖ <span th:text="${campanha.local}">Local</span></span><span>♡ <span th:text="${campanha.tag}">Tipo</span></span></div>
 
+
+    <section class="campaign-grid" id="categorias">
+        <article class="campaign-card"
+                 th:each="campanha : ${campanhas}"
+                 th:data-category="${campanha.categoria}"
+                 th:data-location="${campanha.local}">
+
+            <div class="campaign-visual" th:classappend="${' visual-' + campanha.cor}">
+
+                <img th:if="${campanha.temImagem}"
+                     th:src="@{/campanhas/{id}/imagem(id=${campanha.ID})}"
+                     class="campaign-image"
+                     alt="Imagem da campanha">
+
+                <span class="campaign-category"
+                      th:text="${campanha.categoria}">Categoria</span>
+
+                <span class="pinned-label"
+                      th:if="${campanha.fixada and perfil == 'ADMIN'}">★ Fixada</span>
+
+                <span class="visual-initials"
+                      th:unless="${campanha.temImagem}"
+                      th:text="${campanha.inicial}">ONG</span>
+
+                <span class="visual-heart"
+                      th:unless="${campanha.temImagem}">♥</span>
+            </div>
+
+            <div class="campaign-body">
+
+                <div class="organization-line">
+
+                    <img th:if="${campanha.temFotoOng}"
+                         th:src="@{/ongs/{id}/foto(id=${campanha.ONG_ID})}"
+                         class="org-avatar"
+                         style="object-fit: cover;"
+                         alt="Foto da ONG">
+
+                    <span class="org-avatar"
+                          th:unless="${campanha.temFotoOng}"
+                          th:text="${campanha.inicial}">ON</span>
+
+                    <span th:text="${campanha.ong}">Nome da ONG</span>
+
+                    <span class="verified-mark"
+                          title="Organização cadastrada">✓</span>
+                </div>
+
+                <h3 th:text="${campanha.titulo}">Título da campanha</h3>
+
+                <p class="campaign-description"
+                   th:text="${campanha.descricao}">Descrição da campanha</p>
+
+                <div class="campaign-meta">
+                    <span>⌖ <span th:text="${campanha.local}">Local</span></span>
+                    <span>♡ <span th:text="${campanha.tag}">Tipo</span></span>
+                </div>
                 <div class="campaign-footer">
                     <span class="campaign-status">Conheça essa causa</span>
 
@@ -105,8 +219,6 @@
         <div><span class="eyebrow">SUA JORNADA</span><h2 th:text="${perfil == 'VOLUNTARIO' ? 'Sua próxima atitude começa aqui.' : 'Encontre apoio perto de você.'}">Sua jornada</h2><p th:text="${perfil == 'VOLUNTARIO' ? 'Explore as campanhas e descubra onde sua participação pode fazer a diferença.' : 'Conheça organizações e iniciativas que podem oferecer o apoio que você procura.'}">Descrição</p></div>
         <span class="admin-chip" th:text="${perfil == 'VOLUNTARIO' ? 'Perfil voluntário' : 'Perfil beneficiário'}">Perfil</span>
     </section>
-
-    <div class="modal fade" id="comingSoonModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content coming-modal"><div class="modal-body text-center p-4"><div class="modal-icon">✳</div><h3>Estamos preparando essa etapa!</h3><p>Esta é a primeira versão visual do ConectaSocial. As ações serão conectadas ao banco de dados na próxima fase.</p><button type="button" class="btn-orange" data-bs-dismiss="modal">Entendi</button></div></div></div></div>
 </main>
 </div>
 </body>

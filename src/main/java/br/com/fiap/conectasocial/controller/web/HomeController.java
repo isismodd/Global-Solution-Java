@@ -49,6 +49,12 @@ public class HomeController {
 
         for (Map<String, Object> campanha : campanhas) {
 
+            campanha.put("temImagem",
+                    ((Number) campanha.get("TEM_IMAGEM")).intValue() == 1);
+
+            campanha.put("temFotoOng",
+                    ((Number) campanha.get("TEM_FOTO_ONG")).intValue() == 1);
+
             String nomeOng = String.valueOf(campanha.get("NOME_ONG"));
 
             campanha.put("ong", nomeOng);

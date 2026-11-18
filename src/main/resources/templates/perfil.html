@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head}">
+    <title>Meu perfil - ConectaSocial</title>
+</head>
+<body>
+
+<div th:replace="~{layout/base :: layout(~{::page})}">
+    <main th:fragment="page" class="container py-5">
+
+        <style>
+            .perfil-header {
+                margin-bottom: 30px;
+            }
+
+            .perfil-card {
+                background: white;
+                border: 1px solid #eee8e3;
+                border-radius: 16px;
+                padding: 28px;
+                margin-bottom: 24px;
+                box-shadow: 0 4px 15px rgba(55, 39, 27, .04);
+            }
+
+            .perfil-card h4 {
+                font-weight: 800;
+                margin-bottom: 6px;
+            }
+
+            .perfil-subtitulo {
+                color: #88817c;
+                font-size: 14px;
+                margin-bottom: 24px;
+            }
+
+            .perfil-foto-area {
+                display: flex;
+                align-items: center;
+                gap: 24px;
+                flex-wrap: wrap;
+            }
+
+            .perfil-foto {
+                width: 125px;
+                height: 125px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 4px solid #fff0e8;
+                background: #fff0e8;
+            }
+
+            .perfil-foto-placeholder {
+                width: 125px;
+                height: 125px;
+                border-radius: 50%;
+                background: #fff0e8;
+                color: #f45a22;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 42px;
+                border: 4px solid #fff7ef;
+            }
+
+            .perfil-foto-info {
+                flex: 1;
+                min-width: 220px;
+            }
+
+            .perfil-foto-info p {
+                color: #88817c;
+                font-size: 13px;
+                margin-bottom: 12px;
+            }
+
+            .perfil-label {
+                font-weight: 700;
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+
+            .perfil-input {
+                border: 1px solid #e8e1dc;
+                border-radius: 9px;
+                padding: 11px 13px;
+            }
+
+            .perfil-input:focus {
+                border-color: #f45a22;
+                box-shadow: 0 0 0 3px rgba(244, 90, 34, .12);
+            }
+
+            .perfil-tipo {
+                display: inline-block;
+                background: #fff0e8;
+                color: #dc4816;
+                padding: 7px 13px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+            .btn-perfil {
+                background: #f45a22;
+                color: white;
+                border: none;
+                border-radius: 9px;
+                padding: 11px 20px;
+                font-weight: 700;
+            }
+
+            .btn-perfil:hover {
+                background: #dc4816;
+                color: white;
+            }
+
+            .btn-foto {
+                background: #fff0e8;
+                color: #dc4816;
+                border: 1px solid #f8d5c4;
+                border-radius: 9px;
+                padding: 9px 15px;
+                font-weight: 700;
+            }
+
+            .btn-foto:hover {
+                background: #ffe3d5;
+                color: #dc4816;
+            }
+
+            @media (max-width: 576px) {
+                .perfil-card {
+                    padding: 20px;
+                }
+            }
+        </style>
+
+        <div class="perfil-header">
+            <h2 class="mb-1">Meu perfil</h2>
+            <p class="text-muted mb-0">
+                Gerencie suas informações e personalize sua conta.
+            </p>
+        </div>
+
+        <div th:if="${sucesso}"
+             class="alert alert-success"
+             th:text="${sucesso}">
+        </div>
+
+        <div th:if="${erro}"
+             class="alert alert-danger"
+             th:text="${erro}">
+        </div>
+
+        <!-- FOTO DE PERFIL -->
+        <section class="perfil-card">
+            <h4>Foto de perfil</h4>
+            <p class="perfil-subtitulo">
+                Adicione uma foto para que as pessoas possam reconhecer você.
+            </p>
+
+            <div class="perfil-foto-area">
+
+                <img th:if="${usuario.fotoPerfil != null}"
+                     th:src="@{/perfil/foto}"
+                     alt="Foto de perfil"
+                     class="perfil-foto">
+
+                <div th:unless="${usuario.fotoPerfil != null}"
+                     class="perfil-foto-placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
+
+                <div class="perfil-foto-info">
+                    <form th:action="@{/perfil/foto}"
+                          method="post"
+                          enctype="multipart/form-data">
+
+                        <label for="foto" class="perfil-label d-block">
+                            Escolher uma imagem
+                        </label>
+
+                        <input type="file"
+                               id="foto"
+                               name="foto"
+                               class="form-control perfil-input mb-3"
+                               accept="image/jpeg,image/png,image/webp"
+                               required>
+
+                        <p>
+                            Formatos aceitos: JPG, PNG e WebP.
+                            Tamanho máximo: 2 MB.
+                        </p>
+
+                        <button type="submit" class="btn-foto">
+                            <i class="fas fa-camera me-2"></i>
+                            Atualizar foto
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- DADOS PESSOAIS -->
+        <section class="perfil-card">
+            <h4>Dados pessoais</h4>
+            <p class="perfil-subtitulo">
+                Mantenha suas informações atualizadas.
+            </p>
+
+            <div class="mb-4">
+                <span class="perfil-tipo"
+                      th:text="${usuario.perfil}">
+                    VOLUNTARIO
+                </span>
+            </div>
+
+            <form th:action="@{/perfil/atualizar}" method="post">
+
+                <div class="mb-3">
+                    <label for="nome" class="perfil-label">
+                        Nome completo
+                    </label>
+
+                    <input type="text"
+                           id="nome"
+                           name="nome"
+                           class="form-control perfil-input"
+                           th:value="${usuario.nome}"
+                           maxlength="120"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="perfil-label">
+                        E-mail
+                    </label>
+
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           class="form-control perfil-input"
+                           th:value="${usuario.email}"
+                           maxlength="150"
+                           required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="telefone" class="perfil-label">
+                        Telefone
+                    </label>
+
+                    <input type="tel"
+                           id="telefone"
+                           name="telefone"
+                           class="form-control perfil-input"
+                           th:value="${usuario.telefone}"
+                           maxlength="20"
+                           placeholder="(00) 00000-0000">
+                </div>
+
+                <button type="submit" class="btn-perfil">
+                    <i class="fas fa-save me-2"></i>
+                    Salvar alterações
+                </button>
+
+            </form>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>

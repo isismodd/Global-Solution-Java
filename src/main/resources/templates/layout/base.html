@@ -25,16 +25,48 @@
             <a class="side-link" href="#categorias"><span class="nav-symbol">◇</span> Categorias</a>
             <a class="side-link" href="#minhas-atividades" th:if="${perfil == 'VOLUNTARIO' or perfil == 'BENEFICIARIO'}"><span class="nav-symbol">♡</span> Minhas atividades</a>
             <a class="side-link" th:href="@{/ong/campanhas}" th:if="${perfil == 'ONG'}"><span class="nav-symbol">▤</span> Minhas campanhas</a>
-            <a class="side-link" th:href="@{/ong/interesses}" th:if="${perfil == 'ONG'}">♧</span> Pessoas interessadas</a>
+            <a class="side-link" th:href="@{/ong/interesses}" th:if="${perfil == 'ONG'}">
+                <span class="nav-symbol">♧</span> Pessoas interessadas
+            </a>
             <a class="side-link" href="#gestao" th:if="${perfil == 'ADMIN'}"><span class="nav-symbol">⚙</span> Gestão da plataforma</a>
         </nav>
         <div class="sidebar-bottom">
             <div class="help-card"><div class="help-icon">✳</div><strong>Juntos fazemos mais.</strong><p>Pequenas atitudes podem transformar muitas histórias.</p></div>
+
             <div class="profile-mini">
-                <div class="avatar avatar-orange" th:text="${#strings.substring(nomeExibicao,0,1).toUpperCase()}">U</div>
-                <div class="profile-mini-text"><strong th:text="${nomeExibicao}">Usuário</strong><small th:text="${perfil}">PERFIL</small></div>
-                <a class="logout-link" th:href="@{/logout}" title="Sair">↗</a>
+
+                <a th:href="@{/perfil}"
+                   class="d-flex align-items-center gap-2 text-decoration-none flex-grow-1"
+                   style="min-width: 0; color: inherit;">
+
+                    <img th:if="${usuario != null and usuario.fotoPerfil != null}"
+                         th:src="@{/perfil/foto}"
+                         alt="Foto do perfil"
+                         class="avatar"
+                         style="width: 42px; height: 42px; object-fit: cover; border-radius: 50%;">
+
+                    <div th:unless="${usuario != null and usuario.fotoPerfil != null}"
+                         class="avatar avatar-orange"
+                         th:text="${#strings.substring(nomeExibicao,0,1).toUpperCase()}">
+                        U
+                    </div>
+
+                    <div class="profile-mini-text">
+                        <strong th:text="${nomeExibicao}">Usuário</strong>
+                        <small th:text="${perfil}">PERFIL</small>
+                    </div>
+
+                </a>
+
+                <a class="logout-link"
+                   th:href="@{/logout}"
+                   title="Sair"
+                   aria-label="Sair">
+                    ↗
+                </a>
+
             </div>
+
         </div>
     </aside>
     <main class="main-area">
@@ -52,15 +84,90 @@
 </div>
 <script src="/webjars/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script>
-(function(){
- const search=document.getElementById('campaignSearch');
- const category=document.getElementById('categoryFilter');
- const location=document.getElementById('locationFilter');
- const cards=[...document.querySelectorAll('.campaign-card')];
- const empty=document.getElementById('emptyState');
- function filter(){const q=(search?.value||'').toLocaleLowerCase('pt-BR');const c=category?.value||'';const l=(location?.value||'').toLocaleLowerCase('pt-BR');let visible=0;cards.forEach(card=>{const text=card.innerText.toLocaleLowerCase('pt-BR');const okQ=!q||text.includes(q);const okC=!c||card.dataset.category===c;const okL=!l||card.dataset.location.toLocaleLowerCase('pt-BR').includes(l);card.hidden=!(okQ&&okC&&okL);if(!card.hidden)visible++;});if(empty)empty.hidden=visible!==0;}
- [search,category,location].forEach(el=>el?.addEventListener('input',filter));
-})();
+
+    (function () {
+        const search = document.getElementById('campaignSearch');
+        const categoryContainer = document.getElementById('categoryFilter');
+        const location = document.getElementById('locationFilter');
+        const clearButton = document.getElementById('clearFilters');
+
+        const cards = [...document.querySelectorAll('.campaign-card')];
+        const empty = document.getElementById('emptyState');
+
+        const categoryButtons = categoryContainer
+            ? [...categoryContainer.querySelectorAll('.category-option')]
+            : [];
+
+        let selectedCategory = '';
+
+        function filter() {
+            const q = (search?.value || '').toLocaleLowerCase('pt-BR');
+            const l = (location?.value || '').toLocaleLowerCase('pt-BR');
+
+            let visible = 0;
+
+            cards.forEach(card => {
+                const text = card.innerText.toLocaleLowerCase('pt-BR');
+                const cardCategory = card.dataset.category || '';
+                const cardLocation = (card.dataset.location || '')
+                    .toLocaleLowerCase('pt-BR');
+
+                const matchesSearch = !q || text.includes(q);
+                const matchesCategory = !selectedCategory ||
+                    cardCategory === selectedCategory;
+                const matchesLocation = !l || cardLocation.includes(l);
+
+                const show = matchesSearch &&
+                    matchesCategory &&
+                    matchesLocation;
+
+                card.hidden = !show;
+
+                if (show) visible++;
+            });
+
+            if (empty) {
+                empty.hidden = visible !== 0;
+            }
+        }
+
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                selectedCategory = button.dataset.category || '';
+
+                categoryButtons.forEach(item => {
+                    const active = item === button;
+
+                    item.classList.toggle('active', active);
+                    item.setAttribute('aria-pressed', active);
+                });
+
+                filter();
+            });
+        });
+
+        search?.addEventListener('input', filter);
+        location?.addEventListener('input', filter);
+
+        clearButton?.addEventListener('click', () => {
+            if (search) search.value = '';
+            if (location) location.value = '';
+
+            selectedCategory = '';
+
+            categoryButtons.forEach(button => {
+                const active = button.dataset.category === '';
+
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-pressed', active);
+            });
+
+            filter();
+        });
+
+        filter();
+    })();
+
 </script>
 </body>
 </html>

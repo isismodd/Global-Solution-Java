@@ -17,6 +17,7 @@ public class Usuario implements UserDetails {
     private String perfil;
     private Boolean ativo;
     private LocalDateTime dataCadastro;
+    private byte[] fotoPerfil;
 
     public Usuario() {}
     public Usuario(Long id, String nome, String email, String senha, String telefone,
@@ -33,6 +34,14 @@ public class Usuario implements UserDetails {
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }
     @Override public boolean isEnabled() { return Boolean.TRUE.equals(ativo); }
+
+    public byte[] getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(byte[] fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
     public Long getId(){return id;} public void setId(Long v){id=v;}
     public String getNome(){return nome;} public void setNome(String v){nome=v;}
     public String getEmail(){return email;} public void setEmail(String v){email=v;}
