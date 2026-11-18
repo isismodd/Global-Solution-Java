@@ -35,6 +35,14 @@ jobs:
         SECURITY_USERNAME: ${{ secrets.SECURITY_USERNAME }}
         SECURITY_PASSWORD: ${{ secrets.SECURITY_PASSWORD }}
 
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+        SPRING_RABBITMQ_HOST: ${{ secrets.SPRING_RABBITMQ_HOST }}
+        SPRING_RABBITMQ_PORT: 5672
+        SPRING_RABBITMQ_USERNAME: ${{ secrets.SPRING_RABBITMQ_USERNAME }}
+        SPRING_RABBITMQ_PASSWORD: ${{ secrets.SPRING_RABBITMQ_PASSWORD }}
+
+
         APP_BASE_URL: https://global-solution-java-rm561497.azurewebsites.net
         
 
