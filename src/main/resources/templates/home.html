@@ -38,8 +38,19 @@
     </section>
 
 
-    <section class="filter-panel" aria-label="Filtros de campanhas">
+    <section class="filter-panel" aria-label="Pesquisa de campanhas">
 
+        <div class="feed-mode-switch" th:if="${perfil == 'VOLUNTARIO' or perfil == 'BENEFICIARIO'}">
+            <button type="button" class="feed-mode-button active" id="normalModeButton" aria-pressed="true">
+                <span aria-hidden="true">⌕</span> Pesquisa normal
+            </button>
+            <button type="button" class="feed-mode-button" id="aiModeButton" aria-pressed="false">
+                <span aria-hidden="true">✦</span> Apoio de IA
+                <span class="ai-mode-tag">Gemini</span>
+            </button>
+        </div>
+
+        <div id="normalSearchPanel" class="feed-search-content">
         <label class="search-box">
             <span>⌕</span>
             <input id="campaignSearch" type="search"
@@ -105,10 +116,46 @@
                 ↺ Limpar filtros
             </button>
         </div>
+        </div>
+
+        <div id="aiSearchPanel" class="ai-search-panel" hidden
+             th:if="${perfil == 'VOLUNTARIO' or perfil == 'BENEFICIARIO'}">
+            <div class="ai-search-heading">
+                <span class="ai-sparkle" aria-hidden="true">✦</span>
+                <div>
+                    <strong th:text="${perfil == 'VOLUNTARIO' ? 'Como você gostaria de ajudar?' : 'Que tipo de apoio você está procurando?'}">
+                        Como podemos ajudar?
+                    </strong>
+                    <p th:text="${perfil == 'VOLUNTARIO' ? 'Conte seus interesses, habilidades ou disponibilidade. A IA encontrará campanhas compatíveis.' : 'Descreva sua necessidade. A IA buscará campanhas ativas que possam oferecer apoio.'}">
+                        Descreva o que procura e receba recomendações de campanhas.
+                    </p>
+                </div>
+            </div>
+            <form id="aiRecommendationForm" class="ai-recommendation-form">
+                <label class="visually-hidden" for="aiRequestText">Descreva o que procura ou como deseja ajudar</label>
+                <textarea id="aiRequestText" name="texto" minlength="10" maxlength="1000"
+                          rows="3" required
+                          placeholder="Ex.: Tenho disponibilidade aos sábados e gostaria de ajudar com atividades de educação para crianças..."></textarea>
+                <div class="ai-form-footer">
+                    <small>Escreva entre 10 e 1.000 caracteres.</small>
+                    <button type="submit" class="ai-submit-button" id="aiSubmitButton">
+                        <span aria-hidden="true">✦</span> Encontrar campanhas
+                    </button>
+                </div>
+            </form>
+            <div id="aiFeedback" class="ai-feedback" role="status" aria-live="polite" hidden></div>
+        </div>
 
     </section>
 
-
+    <section id="aiResultsSection" class="ai-results-section" hidden th:attr="data-profile=${perfil}">
+        <div class="ai-results-heading">
+            <div><span class="eyebrow">SUGESTÕES PERSONALIZADAS</span><h3>Campanhas recomendadas para você</h3></div>
+            <span class="ai-results-count" id="aiResultsCount"></span>
+        </div>
+        <p id="aiSummary" class="ai-summary"></p>
+        <div class="campaign-grid" id="aiResultsGrid"></div>
+    </section>
 
     <section class="campaign-grid" id="categorias">
         <article class="campaign-card"
@@ -221,5 +268,6 @@
     </section>
 </main>
 </div>
+<script th:src="@{/js/feed.js}" defer></script>
 </body>
 </html>
