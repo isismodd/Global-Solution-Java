@@ -111,7 +111,7 @@
         aiResultsGrid.replaceChildren();
 
         try {
-            const response = await fetch('/api/ia/recomendar-campanhas', {
+            const response = await fetch('/ia/recomendar-campanhas', {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },

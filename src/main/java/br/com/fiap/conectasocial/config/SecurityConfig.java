@@ -94,6 +94,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/api/interesses/meus")
                             .hasAnyRole("VOLUNTARIO", "BENEFICIARIO")
                     .requestMatchers("/api/ia/**").hasAnyRole("VOLUNTARIO", "BENEFICIARIO")
+                    .requestMatchers("/ia/**").hasAnyRole("VOLUNTARIO", "BENEFICIARIO")
 
                     // ---- telas web (já existiam) ----
                     .requestMatchers("/", "/home").authenticated()
